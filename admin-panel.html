@@ -1,0 +1,120 @@
+<!-- admin-panel.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel - Delh Fast</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Admin Panel</h1>
+  </header>
+
+  <div class="container">
+    <h3>Pending Products for Approval</h3>
+    <div id="pendingProducts"></div>
+
+    <h3>All Approved Products</h3>
+    <div id="approvedProducts"></div>
+  </div>
+      <h2>📢 Notifications</h2>
+<button onclick="openNotificationPopup()">➕ Add Notification</button>
+<ul id="notification-list" class="notification-list">
+  <!-- Notifications will be inserted here -->
+</ul>
+  <!-- Notification Popup -->
+<div id="notification-popup" class="modal hidden">
+  <div class="modal-content">
+    <span onclick="closeNotificationPopup()" class="close-btn">&times;</span>
+    <h3>Add New Notification</h3>
+    <textarea id="notification-text" placeholder="Enter your message..."></textarea>
+    <button onclick="saveNotification()">Save</button>
+  
+  </div>
+</div>
+  <button onclick="window.location.href='orderupdate.html'">🛠 Update Order Status</button>
+  
+  <button onclick="window.location.href='index.html'">🏠 Go to Home</button>
+
+
+<script>
+  const products = JSON.parse(localStorage.getItem("products") || "[]");
+  const pendingProducts = products.filter(p => !p.approved);
+  const approvedProducts = products.filter(p => p.approved);
+
+  const pendingContainer = document.getElementById("pendingProducts");
+  const approvedContainer = document.getElementById("approvedProducts");
+
+  function renderProductList(list, container, showApprove) {
+    container.innerHTML = "";
+    list.forEach((product, index) => {
+      const div = document.createElement("div");
+      div.className = "product-card";
+      div.innerHTML = `
+        <img src="${product.image}" alt="${product.name}" style="max-width:100px;" />
+        <h3>${product.name}</h3>
+        <p>₹${product.price}</p>
+        <p>Seller: ${product.seller || "Unknown"}</p>
+        <p>Status: ${product.approved ? "✅ Approved" : "⏳ Pending"}</p>
+        ${showApprove ? `<button onclick="approveProduct(${index})">✅ Approve</button>` : ""}
+        <button onclick="removeProduct(${index}, ${showApprove})">❌ Remove</button>
+        <button onclick="deleteProduct(${index}, ${showApprove})">🗑️ Delete</button>
+      `;
+      container.appendChild(div);
+    });
+  }
+
+  function approveProduct(index) {
+  let products = JSON.parse(localStorage.getItem("products") || "[]");
+
+  // Get pending products (not yet approved)
+  const pending = products.filter(p => !p.approved);
+
+  // Get the actual product object from pending list
+  const productToApprove = pending[index];
+
+  // Find its index in the original full products array
+  const realIndex = products.findIndex(p =>
+    p.name === productToApprove.name &&
+    p.desc === productToApprove.desc &&
+    p.seller === productToApprove.seller
+  );
+
+  // Approve it and update localStorage
+  if (realIndex !== -1) {
+    products[realIndex].approved = true;
+    localStorage.setItem("products", JSON.stringify(products));
+    alert("✅ Product approved successfully");
+    location.reload();
+  } else {
+    alert("⚠️ Error: Product not found.");
+  }
+}
+  function removeProduct(index, isPending) {
+    const container = isPending ? pendingContainer : approvedContainer;
+    const card = container.querySelectorAll(".product-card")[index];
+    if (card) card.remove();
+  }
+function deleteProduct(index, isPending) {
+  let products = JSON.parse(localStorage.getItem("products") || "[]");
+  let filteredList = isPending ? products.filter(p => !p.approved) : products.filter(p => p.approved);
+  let productToDelete = filteredList[index];
+
+  if (!productToDelete?.time) {
+    alert("❌ Cannot delete: product time not set.");
+    return;
+  }
+
+  // Use time to uniquely delete one product only
+  const updatedProducts = products.filter(p => p.time !== productToDelete.time);
+  localStorage.setItem("products", JSON.stringify(updatedProducts));
+  alert("🗑️ Product permanently deleted");
+  location.reload();
+}
+  renderProductList(pendingProducts, pendingContainer, true);
+  renderProductList(approvedProducts, approvedContainer, false);
+</script>
+</body>
+</html>

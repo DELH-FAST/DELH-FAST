@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+</head>
+
+<body>
+  
+</body>
+
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Offers - Delh Fast</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="header">
+    <h1>🎁 Offers & Coupons</h1>
+  </header>
+
+  <main class="container" id="offers-list">
+    <!-- Offers will appear here -->
+  </main>
+
+  <script>
+    const offers = [
+      {
+        title: "Welcome Offer",
+        code: "DFNEW",
+        description: "Get 10% off on your first order. Min purchase ₹499."
+      },
+      {
+        title: "Summer Sale",
+        code: "SUMMER20",
+        description: "Flat 20% off on groceries above ₹999."
+      },
+      {
+        title: "Festive Deal",
+        code: "FESTIVE100",
+        description: "₹100 off on orders above ₹1500. Valid for 3 days!"
+      }
+    ];
+
+    const container = document.getElementById("offers-list");
+
+    if (offers.length === 0) {
+      container.innerHTML = "<p>No active offers right now.</p>";
+    } else {
+      offers.forEach(offer => {
+        container.innerHTML += `
+          <div class="card">
+            <h3>${offer.title}</h3>
+            <p>${offer.description}</p>
+            <p><strong>Use Code:</strong> <code>${offer.code}</code></p>
+          </div>
+        `;
+      });
+    }
+  </script>
+
+  <footer class="bottom-bar">
+    <a href="index.html">🏠 Home</a>
+    <a href="cart.html">🛒 Cart</a>
+    <a href="orders.html">📦 Orders</a>
+    <a href="settings.html">⚙️ Settings</a>
+    <a href="more.html">⋯ More</a>
+  </footer>
+
+</body>
+</html>

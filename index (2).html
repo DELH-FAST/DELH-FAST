@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Delh Fast</title>
+  <style>
+    body { font-family: sans-serif; margin: 0; padding-bottom: 60px; }
+    .header, .category-bar, .bottom-bar {
+      background: #f0f0f0; padding: 10px; display: flex; gap: 10px; align-items: center;
+    }
+    .search-bar { flex: 1; padding: 5px; }
+    .product-grid { padding: 10px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+    .product-card { border: 1px solid #ccc; padding: 10px; border-radius: 6px; background: #fff; }
+    .product-card img { max-width: 100%; height: 150px; object-fit: cover; }
+    button { margin-top: 5px; padding: 6px 10px; border: none; background: #007bff; color: white; cursor: pointer; border-radius: 4px; }
+    .bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; justify-content: space-around; background: #ddd; }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <img src="logo.jpg" alt="Logo" style="height:40px;">
+  <h1 style="margin: 0;">Delh Fast</h1>
+  <button onclick="window.location.href='login.html'">🔐 Login</button>
+  <input type="search" id="search-input" placeholder="Search products..." class="search-bar" />
+</header>
+
+<nav class="category-bar">
+  <button>All</button>
+  <button>Grocery</button>
+  <button>Mobiles</button>
+  <button>Fashion</button>
+  <button>Electronics</button>
+</nav>
+
+<main id="product-list" class="product-grid"></main>
+
+<footer class="bottom-bar">
+  <button onclick="window.location.href='cart.html'">🛒 Cart</button>
+  <button onclick="window.location.href='orders.html'">📦 Orders</button>
+  <button onclick="window.location.href='settings.html'">⚙️ Settings</button>
+  <button onclick="window.location.href='more.html'">⋯ More</button>
+</footer>
+  <script src="main.js"></script>
+<script>
+let currentCategory = "All";
+let viewMode = "grid";
+let searchQuery = "";
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".category-bar button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      currentCategory = btn.innerText;
+      renderProducts();
+    });
+  });
+
+  document.getElementById("search-input").addEventListener("input", e => {
+    searchQuery = e.target.value.trim().toLowerCase();
+    renderProducts();
+  });
+
+  renderProducts();
+});
+
+function renderProducts() {
+  const productList = document.getElementById("product-list");
+  const products = JSON.parse(localStorage.getItem("products") || "[]");
+  const approved = products.filter(p => p.approved);
+
+  let filtered = currentCategory === "All"
+    ? approved
+    : approved.filter(p => (p.category || "").toLowerCase() === currentCategory.toLowerCase());
+
+  if (searchQuery) {
+    filtered = filtered.filter(p => (p.name || "").toLowerCase().includes(searchQuery));
+  }
+
+  productList.innerHTML = "";
+  if (filtered.length === 0) {
+    productList.innerHTML = "<p>No products match your search.</p>";
+    return;
+  }
+
+  filtered.forEach((product) => {
+    if (!product || typeof product !== "object" || !product.name) return;
+
+    let encoded;
+    try {
+      encoded = encodeURIComponent(JSON.stringify(product));
+    } catch (e) {
+      console.error("❌ Failed to encode product:", product);
+      return;
+    }
+
+    const div = document.createElement("div");
+    div.className = "product-card";
+    div.innerHTML = `
+      <img src="${product.image}" alt="${product.name}" />
+      <h3>${product.name}</h3>
+      <p><strong>₹${product.price}</strong> <del>₹${product.mrp}</del>
+         <span style="color:green;">(${product.discount}% OFF)</span></p>
+      <p>${product.desc}</p>
+      <button class="buy-now" data-product='${encoded}'>Buy Now</button>
+      <button class="add-to-cart" data-product='${encoded}'>Add to Cart</button>
+      <button class="add-to-wishlist" data-product='${encoded}'>❤️ Wishlist</button>
+    `;
+    productList.appendChild(div);
+  });
+}
+
+document.addEventListener("click", function (e) {
+  const btn = e.target.closest("button");
+  if (!btn || !btn.dataset.product) return;
+
+  let product;
+  try {
+    product = JSON.parse(decodeURIComponent(btn.dataset.product));
+  } catch (err) {
+    console.error("❌ Decode failed:", err);
+    alert("⚠️ Invalid product data");
+    return;
+  }
+
+  if (btn.classList.contains("buy-now")) buyNow(product);
+  else if (btn.classList.contains("add-to-cart")) addToCart(product);
+  else if (btn.classList.contains("add-to-wishlist")) addToWishlist(product);
+});
+
+function buyNow(product) {
+  try {
+    localStorage.setItem("buynow", JSON.stringify(product));
+    window.location.href = "checkout.html";
+  } catch (e) {
+    console.error("❌ Buy Now failed", e);
+    alert("❌ Could not proceed to checkout.");
+  }
+}
+
+function addToCart(product) {
+  try {
+    if (!product || typeof product !== "object" || !product.name) {
+      throw new Error("Invalid product for cart");
+    }
+
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    cart.push(product);
+    localStorage.setItem("cart", JSON.stringify(cart));
+    alert("✅ Added to cart");
+  } catch (e) {
+    console.error("🛑 addToCart failed!", e);
+    alert("❌ Error adding to cart");
+  }
+}
+
+function addToWishlist(product) {
+  try {
+    if (!product || typeof product !== "object" || !product.name) {
+      throw new Error("Invalid product for wishlist");
+    }
+
+    const wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
+    wishlist.push(product);
+    localStorage.setItem("wishlist", JSON.stringify(wishlist));
+    alert("❤️ Added to wishlist");
+  } catch (e) {
+    console.error("🛑 addToWishlist failed!", e);
+    alert("❌ Error adding to wishlist");
+  }
+}
+</script>
+
+</body>
+</html>

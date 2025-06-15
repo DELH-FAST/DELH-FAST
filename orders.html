@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Orders - Delh Fast</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>My Orders</h1>
+  </header>
+
+  <div class="container" id="orders-container">
+    <!-- Orders will be shown here -->
+  </div>
+
+  <script>
+    const orders = JSON.parse(localStorage.getItem("all_orders") || "[]");
+    const buyer = JSON.parse(localStorage.getItem("loggedInUser") || "{}");
+    const container = document.getElementById("orders-container");
+
+    // Filter only this buyer's orders
+    const myOrders = orders.filter(o => o.buyer.email === buyer.email);
+
+    if (myOrders.length === 0) {
+      container.innerHTML = "<p>No orders placed yet.</p>";
+    } else {
+      myOrders.forEach((order, i) => {
+        const orderId = `order-${i}`;
+        const statusId = `status-${i}`;
+        const btn = order.status !== "Delivered" ? `
+          <button onclick="cancelOrder(${i})"
+            style="background:red; color:white; border:none; padding:6px 12px; border-radius:5px;">
+            ❌ Cancel Order
+          </button>` : `
+          <button disabled style="background:gray; color:white; border:none; padding:6px 12px; border-radius:5px;">
+            ✅ Delivered
+          </button>`;
+
+        const div = document.createElement("div");
+        div.className = "product-card";
+        div.id = orderId;
+        div.style = "border:1px solid #ccc; padding:10px; margin-bottom:10px;";
+        div.innerHTML = `
+          <h3>${order.product.name}</h3>
+          <p>Price: ₹${order.product.price}</p>
+          <p>Status: <strong id="${statusId}">${order.status}</strong></p>
+          ${btn}
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function cancelOrder(index) {
+      const allOrders = JSON.parse(localStorage.getItem("all_orders") || "[]");
+      const buyer = JSON.parse(localStorage.getItem("loggedInUser") || "{}");
+      const myOrders = allOrders.filter(o => o.buyer.email === buyer.email);
+
+      // Get the actual matching order to cancel
+      const orderToCancel = myOrders[index];
+      const realIndex = allOrders.findIndex(o =>
+        o.buyer.email === orderToCancel.buyer.email &&
+        o.product.name === orderToCancel.product.name &&
+        o.time === orderToCancel.time
+      );
+
+      if (realIndex !== -1 && allOrders[realIndex].status !== "Delivered") {
+        allOrders.splice(realIndex, 1);
+        localStorage.setItem("all_orders", JSON.stringify(allOrders));
+        alert("❌ Order cancelled.");
+        location.reload();
+      } else {
+        alert("🚫 Cannot cancel delivered or unknown order.");
+      }
+    }
+  </script>
+
+  <div class="bottom-bar">
+    <a href="index.html">Home</a>
+    <a href="cart.html">Cart</a>
+    <a href="orders.html">Orders</a>
+    <a href="settings.html">Settings</a>
+  </div>
+</body>
+</html>

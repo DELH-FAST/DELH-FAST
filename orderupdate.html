@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+</head>
+
+<body>
+  
+</body>
+
+</html>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Panel - All Orders</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .order-box {
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      background: #f9f9f9;
+    }
+    select, button {
+      padding: 6px 10px;
+      margin-top: 8px;
+      margin-right: 5px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    img { max-width: 140px; display: block; margin: 10px 0; }
+    h3 { margin-bottom: 5px; }
+  </style>
+</head>
+<body>
+
+<h2>📦 Admin Panel - Manage All Orders</h2>
+<div id="orders-container"></div>
+<button onclick="window.location.href='index.html'">🏠 Go to Home</button>
+
+<script>
+const steps = [
+  "Order Placed",
+  "Order Confirmed",
+  "Packed",
+  "Out for Delivery",
+  "Delivered"
+];
+
+// Load all orders from localStorage
+function loadOrders() {
+  return JSON.parse(localStorage.getItem("all_orders") || "[]");
+}
+
+// Save orders to localStorage
+function saveOrders(orders) {
+  localStorage.setItem("all_orders", JSON.stringify(orders));
+}
+
+// Render all orders
+function renderOrders() {
+  const orders = loadOrders();
+  const container = document.getElementById("orders-container");
+  container.innerHTML = "";
+
+  if (orders.length === 0) {
+    container.innerHTML = "<p>No orders found.</p>";
+    return;
+  }
+
+  orders.forEach((order, index) => {
+    const product = order.product;
+    const buyer = order.buyer || {};
+    const currentStatus = order.status || "Order Placed";
+
+    const statusOptions = steps.map(s =>
+      `<option value="${s}" ${s === currentStatus ? "selected" : ""}>${s}</option>`
+    ).join("");
+
+    const box = document.createElement("div");
+    box.className = "order-box";
+    box.innerHTML = `
+      <h3>🛒 Product: ${product.name}</h3>
+      <img src="${product.image}" alt="${product.name}" />
+      <p><strong>Price:</strong> ₹${product.price} <del>₹${product.mrp}</del> (${product.discount}% OFF)</p>
+      <p><strong>Description:</strong> ${product.desc}</p>
+      <p><strong>Seller Email:</strong> ${product.seller || "N/A"}</p>
+
+      <p><strong>Buyer Name:</strong> ${buyer.name || "Unknown"}</p>
+      <p><strong>Phone:</strong> ${buyer.phone || "-"}</p>
+      <p><strong>Address:</strong> ${buyer.street || ""}, ${buyer.city || ""}, ${buyer.district || ""}, ${buyer.state || ""} - ${buyer.pincode || ""}</p>
+
+      <p><strong>Status:</strong> <span id="status-${index}">${currentStatus}</span></p>
+
+      <select id="status-select-${index}">${statusOptions}</select>
+      <button onclick="updateStatus(${index})">✅ Update Status</button>
+    `;
+
+    container.appendChild(box);
+  });
+}
+
+// Update status for one order
+function updateStatus(index) {
+  const orders = loadOrders();
+  const select = document.getElementById(`status-select-${index}`);
+  const newStatus = select.value;
+  orders[index].status = newStatus;
+  saveOrders(orders);
+  document.getElementById(`status-${index}`).innerText = newStatus;
+  alert(`✅ Order ${index + 1} updated to "${newStatus}"`);
+}
+
+document.addEventListener("DOMContentLoaded", renderOrders);
+</script>
+
+</body>
+</html>

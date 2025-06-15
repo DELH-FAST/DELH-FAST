@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+</head>
+
+<body>
+  
+</body>
+
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>More - Delh Fast</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="header">
+    <h1>⋯ More Options</h1>
+  </header>
+
+  <main class="container">
+    <ul class="option-list">
+      <li><a href="wishlist.html">❤️ Wishlist</a></li>
+      <li><a href="profile.html">👤 Profile</a></li>
+      <li><a href="notifications.html">🔔 Notifications</a></li>
+      <li><a href="support.html">💬 Help & Support</a></li>
+      <li><a href="offers.html">🎁 Offers & Coupons</a></li>
+      <li><a href="settings.html">⚙️ Settings</a></li>
+    </ul>
+    <button onclick="window.location.href='admin-panel.html'">Admin Panel</button>
+
+
+<ul id="notification-list"></ul>
+  </main>
+<button onclick="goToSellerPanel()">👨‍💼 Seller Panel</button>
+
+<script>
+  function goToSellerPanel() {
+    const user = JSON.parse(localStorage.getItem("loggedInUser") || "{}");
+
+    // Check for admin by email
+    const isAdmin = user.email === "delhfast@gmail.com";
+    const isSeller = user.role === "seller";
+
+    if (isAdmin || isSeller) {
+      window.location.href = "seller-panel.html";
+    } else {
+      alert("Access denied. Only sellers or admin can access the seller panel.");
+    }
+  }
+</script>
+  <footer class="bottom-bar">
+    <a href="index.html">🏠 Home</a>
+    <a href="cart.html">🛒 Cart</a>
+    <a href="orders.html">📦 Orders</a>
+    <a href="settings.html">⚙️ Settings</a>
+  </footer>
+
+
+
+</body>
+</html>

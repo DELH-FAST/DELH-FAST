@@ -1,0 +1,65 @@
+<!-- cart.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Cart - Delh Fast</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>My Cart</h1>
+  </header>
+
+  <div class="container" id="cart-items">
+    <!-- Cart items will be loaded here -->
+  </div>
+
+  <div class="container">
+    <h3>Total: ₹<span id="cart-total">0</span></h3>
+    <button onclick="checkout()">Proceed to Checkout</button>
+  </div>
+
+  <script>
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    function renderCart() {
+      const container = document.getElementById("cart-items");
+      const totalSpan = document.getElementById("cart-total");
+      container.innerHTML = "";
+      let total = 0;
+      cart.forEach((item, index) => {
+        total += item.price;
+        container.innerHTML += `
+          <div class="product-card">
+            <h3>${item.name}</h3>
+            <p>₹${item.price}</p>
+            <button onclick="removeFromCart(${index})">Remove</button>
+          </div>
+        `;
+      });
+      totalSpan.innerText = total;
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      renderCart();
+    }
+
+    function checkout() {
+      window.location.href = "checkout.html";
+    }
+
+    renderCart();
+  </script>
+
+  <div class="bottom-bar">
+    <a href="index.html">Home</a>
+    <a href="cart.html">Cart</a>
+    <a href="orders.html">Orders</a>
+    <a href="settings.html">Settings</a>
+  </div>
+</body>
+</html>

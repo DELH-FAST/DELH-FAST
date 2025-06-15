@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+</head>
+
+<body>
+  
+</body>
+
+</html>
+  <!--Tab to edit-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profile - Delh Fast</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="header">
+    <h1>👤 Your Profile</h1>
+  </header>
+
+  <main class="container" id="profile-info">
+    <!-- User profile details will load here -->
+  </main>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem("loggedInUser"));
+
+    function renderProfile() {
+      const container = document.getElementById("profile-info");
+
+      if (!user) {
+        container.innerHTML = "<p>You are not logged in.</p>";
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="card">
+          <p><strong>Name:</strong> ${user.name}</p>
+          <p><strong>Email:</strong> ${user.email}</p>
+          <p><strong>Phone:</strong> ${user.phone}</p>
+          <p><strong>Address:</strong> ${user.street}, ${user.city}, ${user.district}, ${user.state} - ${user.pincode}</p>
+        </div>
+      `;
+    }
+
+    renderProfile();
+  </script>
+
+  <footer class="bottom-bar">
+    <a href="index.html">🏠 Home</a>
+    <a href="cart.html">🛒 Cart</a>
+    <a href="orders.html">📦 Orders</a>
+    <a href="settings.html">⚙️ Settings</a>
+    <a href="more.html">⋯ More</a>
+  </footer>
+
+</body>
+</html>

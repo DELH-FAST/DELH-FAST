@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+</head>
+
+<body>
+  
+</body>
+
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Support - Delh Fast</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="header">
+    <h1>💬 Help & Support</h1>
+  </header>
+
+  <main class="container">
+    <p>If you have any issues or questions, we're here to help!</p>
+
+    <form id="support-form" class="form-card">
+      <label for="email">Your Email</label>
+      <input type="email" id="email" required placeholder="Enter your email" />
+
+      <label for="message">Your Message</label>
+      <textarea id="message" required placeholder="Type your message here..."></textarea>
+
+      <button type="submit">Send Message</button>
+    </form>
+
+    <p id="status-msg"></p>
+  </main>
+
+  <script>
+    const form = document.getElementById("support-form");
+    const statusMsg = document.getElementById("status-msg");
+
+    form.addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      // Simulated message sending
+      statusMsg.textContent = "✅ Your message has been sent! We'll get back to you soon.";
+      form.reset();
+    });
+  </script>
+
+  <footer class="bottom-bar">
+    <a href="index.html">🏠 Home</a>
+    <a href="cart.html">🛒 Cart</a>
+    <a href="orders.html">📦 Orders</a>
+    <a href="settings.html">⚙️ Settings</a>
+    <a href="more.html">⋯ More</a>
+  </footer>
+
+</body>
+</html>

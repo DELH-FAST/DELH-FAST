@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+</head>
+
+<body>
+  
+</body>
+
+</html>
+<!-- login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login - Delh Fast</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Login</h1>
+  </header>
+
+  <div class="container">
+    <form id="loginForm">
+      <label>Email or Phone:</label><br />
+      <input type="text" id="loginId" required /><br /><br />
+
+      <label>Password:</label><br />
+      <input type="password" id="password" required /><br /><br />
+
+      <button type="submit">Login</button>
+    </form>
+
+    <p>Don't have an account? <a href="signup.html">Sign up here</a></p>
+  </div>
+
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const id = document.getElementById("loginId").value;
+      const pwd = document.getElementById("password").value;
+
+      // Basic dummy auth
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+      const user = users.find(u => (u.email === id || u.phone === id) && u.password === pwd);
+
+      if (user) {
+        alert("Login successful");
+        localStorage.setItem("loggedInUser", JSON.stringify(user));
+        // Placeholder for 2FA simulation
+        window.location.href = "index.html";
+      } else {
+        alert("Invalid credentials");
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Checkout</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    .container { border: 1px solid #ccc; padding: 15px; border-radius: 8px; }
+    img { max-width: 150px; display: block; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+
+  <h1>Checkout</h1>
+  <div id="checkout-container" class="container"></div>
+
+<script>
+  const container = document.getElementById("checkout-container");
+  const product = JSON.parse(localStorage.getItem("buynow"));
+
+  if (!product) {
+    container.innerHTML = "<p>❌ No product selected for checkout.</p>";
+    throw new Error("Missing product.");
+  }
+
+  let buyer = JSON.parse(localStorage.getItem("loggedInUser") || "null");
+
+  if (!buyer) {
+    // Ask buyer for fallback info
+    container.innerHTML = `
+      <h3>Enter Your Details</h3>
+      <input type="text" id="name" placeholder="Full Name" required><br><br>
+      <input type="email" id="email" placeholder="Email" required><br><br>
+      <input type="text" id="phone" placeholder="Phone Number" required><br><br>
+      <textarea id="address" placeholder="Full Address" required></textarea><br><br>
+      <button onclick="saveBuyer()">Continue to Checkout</button>
+    `;
+
+    window.saveBuyer = function () {
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const address = document.getElementById("address").value.trim();
+
+      if (!name || !email || !phone || !address) {
+        alert("❌ Please fill in all fields.");
+        return;
+      }
+
+      const newBuyer = { name, email, phone, address };
+      localStorage.setItem("loggedInUser", JSON.stringify(newBuyer));
+      location.reload(); // reload to continue checkout with saved data
+    };
+  } else {
+    // Proceed with checkout
+    container.innerHTML = `
+      <h2>${product.name}</h2>
+      <img src="${product.image}" alt="${product.name}" style="max-width:150px;"><br>
+      <p><strong>Price:</strong> ₹${product.price}</p>
+      <p><del>MRP:</del> ₹${product.mrp} <span style="color:green;">(${product.discount}% OFF)</span></p>
+      <p>${product.desc}</p>
+      <button onclick="placeOrder()">Confirm Order (Cash on Delivery)</button>
+    `;
+  }
+function placeOrder() {
+  const buyer = JSON.parse(localStorage.getItem("loggedInUser"));
+  const product = JSON.parse(localStorage.getItem("buynow"));
+
+  if (!buyer || !buyer.name || !buyer.street || !buyer.email) {
+    alert("❌ Buyer profile is missing or incomplete.");
+    return;
+  }
+
+  if (!product || !product.name || !product.price) {
+    alert("❌ Product info missing. Please try Buy Now again.");
+    return;
+  }
+
+  const order = {
+    product,
+    buyer,
+    status: "Order Placed",
+    time: Date.now()
+  };
+
+  const allOrders = JSON.parse(localStorage.getItem("all_orders") || "[]");
+  allOrders.push(order);
+  localStorage.setItem("all_orders", JSON.stringify(allOrders));
+
+  localStorage.removeItem("buynow");
+
+  alert("✅ Order placed successfully!");
+  window.location.href = "orders.html"; // or homepage if needed
+}
+</script>
+
+</body>
+</html>

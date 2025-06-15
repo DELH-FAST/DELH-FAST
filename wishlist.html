@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+</head>
+
+<body>
+  
+</body>
+
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Wishlist - Delh Fast</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="header">
+    <h1>❤️ Your Wishlist</h1>
+  </header>
+
+  <main class="container" id="wishlist-items">
+    <!-- Wishlist items will appear here -->
+  </main>
+
+  <script>
+    const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+
+    function renderWishlist() {
+      const container = document.getElementById("wishlist-items");
+      container.innerHTML = "";
+
+      if (wishlist.length === 0) {
+        container.innerHTML = "<p>Your wishlist is empty.</p>";
+        return;
+      }
+
+      wishlist.forEach((item, index) => {
+        container.innerHTML += `
+          <div class="product-card">
+            <h3>${item.name}</h3>
+            <p>₹${item.price}</p>
+            <button onclick="removeFromWishlist(${index})">Remove</button>
+            <button onclick="addToCart(${index})">Add to Cart</button>
+          </div>
+        `;
+      });
+    }
+
+    function removeFromWishlist(index) {
+      wishlist.splice(index, 1);
+      localStorage.setItem("wishlist", JSON.stringify(wishlist));
+      renderWishlist();
+    }
+
+    function addToCart(index) {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      cart.push(wishlist[index]);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      alert("Added to cart!");
+    }
+
+    renderWishlist();
+  </script>
+
+  <footer class="bottom-bar">
+    <a href="index.html">🏠 Home</a>
+    <a href="cart.html">🛒 Cart</a>
+    <a href="orders.html">📦 Orders</a>
+    <a href="settings.html">⚙️ Settings</a>
+    <a href="more.html">⋯ More</a>
+  </footer>
+
+</body>
+</html>

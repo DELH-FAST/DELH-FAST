@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+</head>
+
+<body>
+  
+</body>
+
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Notifications - Delh Fast</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="header">
+    <h1>🔔 Notifications</h1>
+  </header>
+
+  <main class="container" id="notifications-list">
+    <!-- Notifications will appear here -->
+  </main>
+<ul id="notification-list" class="notification-list">
+  <!-- Notifications will appear here -->
+</ul>
+
+  <script>
+    // Dummy notifications (replace with real ones if needed)
+    
+    function loadNotifications() {
+      const container = document.getElementById("notifications-list");
+
+      if (notifications.length === 0) {
+        container.innerHTML = "<p>No new notifications.</p>";
+        return;
+      }
+
+      container.innerHTML = "<ul class='notification-list'>" +
+        notifications.map(note => `<li>${note}</li>`).join("") +
+        "</ul>";
+    }
+
+    loadNotifications();
+  </script>
+
+  <footer class="bottom-bar">
+    <a href="index.html">🏠 Home</a>
+    <a href="cart.html">🛒 Cart</a>
+    <a href="orders.html">📦 Orders</a>
+    <a href="settings.html">⚙️ Settings</a>
+    <a href="more.html">⋯ More</a>
+  </footer>
+<script>
+  const list = document.getElementById("notification-list");
+  const notifs = JSON.parse(localStorage.getItem("notifications") || "[]");
+
+  if (notifs.length === 0) {
+    list.innerHTML = "<li>No notifications yet.</li>";
+  } else {
+    list.innerHTML = notifs.map(n => `
+      <li>
+        <p>${n.text}</p>
+        <small>${n.time}</small>
+      </li>
+    `).join("");
+  }
+</script>
+</body>
+</html>
